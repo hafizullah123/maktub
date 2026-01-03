@@ -1,0 +1,17 @@
+{
+    "name": "jahadwal/maktub",
+    "autoload": {
+        "psr-4": {
+            "Jahadwal\\Maktub\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hafizullah",
+            "email": "hjihadwal@gmail.com"
+        }
+    ],
+    "require": {
+        "tecnickcom/tcpdf": "^6.10"
+    }
+}
