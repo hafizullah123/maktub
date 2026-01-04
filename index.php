@@ -176,6 +176,8 @@ th,td{
                     <option value="">همه</option>
                     <option value="صادره" <?= $type=='صادره'?'selected':'' ?>>صادره</option>
                     <option value="وارده" <?= $type=='وارده'?'selected':'' ?>>وارده</option>
+                    <option value="استعلام" <?= $type=='استعلام'?'selected':'' ?>>استعلام</option>
+                    <option value="پیشنهاد" <?= $type=='پیشنهاد'?'selected':'' ?>>پیشنهاد</option>
                 </select>
                 <button>جستجو</button>
             </form>

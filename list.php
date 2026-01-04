@@ -109,10 +109,105 @@ body{
 
 .link-btn{color:#2563eb;cursor:pointer;text-decoration:underline}
 .icon-btn{color:#e11d48;font-size:16px;cursor:pointer}
+.edit-btn{color:#0d9488;font-size:15px;cursor:pointer;margin-right:8px}
 
-/* MODAL */
-.modal-header{background:#f0fdfa}
-.modal-title{color:#065f46}
+/* MODAL - IMPROVED DESIGN */
+.modal-header{
+ background: linear-gradient(135deg, #f0fdfa 0%, #e0f2f1 100%);
+ border-bottom: 2px solid #5fa8a0;
+}
+.modal-title{
+ color:#065f46;
+ font-weight:700;
+ font-size:16px;
+}
+.modal-body{
+ background:#fafdfc;
+}
+.detail-card{
+ background:white;
+ border-radius:8px;
+ padding:15px;
+ margin-bottom:15px;
+ border:1px solid #e0f2f1;
+ box-shadow:0 2px 4px rgba(0,0,0,0.05);
+}
+.detail-title{
+ color:#065f46;
+ font-weight:600;
+ font-size:13px;
+ margin-bottom:5px;
+ border-bottom:1px dashed #e0f2f1;
+ padding-bottom:4px;
+}
+.detail-content{
+ color:#374151;
+ font-size:13px;
+ line-height:1.6;
+}
+.detail-row{
+ display:grid;
+ grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+ gap:12px;
+ margin-bottom:10px;
+}
+.detail-item{
+ background:#f8fafc;
+ padding:8px 10px;
+ border-radius:6px;
+ border-right:3px solid #5fa8a0;
+}
+.detail-label{
+ color:#6b7280;
+ font-size:11px;
+ margin-bottom:2px;
+}
+.detail-value{
+ color:#111827;
+ font-size:12px;
+ font-weight:500;
+}
+.text-content{
+ background:white;
+ padding:12px;
+ border-radius:6px;
+ border:1px solid #e5e7eb;
+ max-height:200px;
+ overflow-y:auto;
+ line-height:1.7;
+}
+.file-badge{
+ background:#fff7ed;
+ color:#9a3412;
+ padding:4px 10px;
+ border-radius:6px;
+ font-size:11px;
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+}
+.pdf-btn{
+ background:#dc2626;
+ color:white;
+ padding:6px 15px;
+ border-radius:6px;
+ text-decoration:none;
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ font-size:12px;
+ transition:all 0.3s;
+}
+.pdf-btn:hover{
+ background:#b91c1c;
+ color:white;
+ transform:translateY(-2px);
+ box-shadow:0 4px 8px rgba(220, 38, 38, 0.2);
+}
+.modal-footer{
+ background:#f8fafc;
+ border-top:1px solid #e5e7eb;
+}
 </style>
 </head>
 
@@ -153,7 +248,7 @@ body{
 <tr>
 <th>نوع</th><th>نمبر</th><th>تاریخ</th><th>مرجع</th>
 <th>مرسل‌الیه</th><th>اقدام</th><th>موضوع</th>
-<th>دوسیه</th><th>وضعیت</th><th>PDF</th>
+<th>دوسیه</th><th>وضعیت</th><th>ویرایش</th><th>PDF</th>
 </tr>
 </thead>
 <tbody>
@@ -165,6 +260,8 @@ body{
 
 <td>
 <span class="link-btn openModal"
+ data-id="<?= $r['id'] ?>"
+ data-type="<?= $r['maktub_type'] ?>"
  data-number="<?= $r['maktub_number'] ?>"
  data-date="<?= $r['maktub_date'] ?>"
  data-subject="<?= htmlspecialchars($r['subject']) ?>"
@@ -172,6 +269,9 @@ body{
  data-sender="<?= htmlspecialchars($r['sender_source']) ?>"
  data-rec="<?= htmlspecialchars($r['mur_sal_aly']) ?>"
  data-action="<?= htmlspecialchars($r['marja_eghdam']) ?>"
+ data-dosya="<?= htmlspecialchars($r['dosya_morba'] ?? '') ?>"
+ data-status="<?= $r['hifz_shud'] ?>"
+ data-status-text="<?= $r['hifz_shud'] ? 'ابلاغیه' : 'جوابیه' ?>"
  data-file="<?= $r['kpdfdesc'] ?>">
 <?= $r['maktub_number'] ?>
 </span>
@@ -188,8 +288,16 @@ body{
 :'<span class="badge badge-j">جوابیه</span>' ?></td>
 
 <td>
+<i class="fas fa-edit edit-btn" 
+   onclick="window.location.href='edit.php?id=<?= $r['id'] ?>'"
+   title="ویرایش مکتوب"></i>
+</td>
+
+<td>
 <?php if($r['kpdfdesc']): ?>
 <i class="fa fa-file-pdf icon-btn openModal"
+ data-id="<?= $r['id'] ?>"
+ data-type="<?= $r['maktub_type'] ?>"
  data-number="<?= $r['maktub_number'] ?>"
  data-date="<?= $r['maktub_date'] ?>"
  data-subject="<?= htmlspecialchars($r['subject']) ?>"
@@ -197,6 +305,9 @@ body{
  data-sender="<?= htmlspecialchars($r['sender_source']) ?>"
  data-rec="<?= htmlspecialchars($r['mur_sal_aly']) ?>"
  data-action="<?= htmlspecialchars($r['marja_eghdam']) ?>"
+ data-dosya="<?= htmlspecialchars($r['dosya_morba'] ?? '') ?>"
+ data-status="<?= $r['hifz_shud'] ?>"
+ data-status-text="<?= $r['hifz_shud'] ? 'ابلاغیه' : 'جوابیه' ?>"
  data-file="<?= $r['kpdfdesc'] ?>"></i>
 <?php endif; ?>
 </td>
@@ -207,25 +318,116 @@ body{
 </div>
 </div>
 
-<!-- MODAL -->
+<!-- IMPROVED MODAL -->
 <div class="modal fade" id="detailModal">
 <div class="modal-dialog modal-lg modal-dialog-centered">
 <div class="modal-content">
 <div class="modal-header">
-<h6 class="modal-title" id="mTitle"></h6>
+<h6 class="modal-title"><i class="fas fa-file-alt"></i> جزئیات کامل مکتوب</h6>
 <button class="btn-close" data-bs-dismiss="modal"></button>
 </div>
-<div class="modal-body">
-<p><b>تاریخ:</b> <span id="mDate"></span></p>
-<p><b>مرجع:</b> <span id="mSender"></span></p>
-<p><b>مرسل‌الیه:</b> <span id="mRec"></span></p>
-<p><b>اقدام:</b> <span id="mAction"></span></p>
-<hr>
-<p id="mBody" style="white-space:pre-line"></p>
-<hr>
-<a id="mPdf" class="btn btn-sm btn-outline-danger d-none" target="_blank">
-<i class="fa fa-file-pdf"></i> مشاهده PDF
+<div class="modal-body p-3">
+<div class="detail-card">
+<div class="detail-title">📋 اطلاعات پایه</div>
+<div class="detail-row">
+<div class="detail-item">
+<div class="detail-label">شماره مکتوب</div>
+<div class="detail-value" id="mNumber"></div>
+</div>
+<div class="detail-item">
+<div class="detail-label">تاریخ</div>
+<div class="detail-value" id="mDate"></div>
+</div>
+<div class="detail-item">
+<div class="detail-label">نوع</div>
+<div class="detail-value">
+<span id="mTypeBadge" class="badge"></span>
+</div>
+</div>
+<div class="detail-item">
+<div class="detail-label">وضعیت</div>
+<div class="detail-value">
+<span id="mStatusBadge" class="badge"></span>
+</div>
+</div>
+</div>
+</div>
+
+<div class="detail-card">
+<div class="detail-title">👥 اطلاعات ارتباطی</div>
+<div class="detail-row">
+<div class="detail-item">
+<div class="detail-label">مرجع (ارسالی کننده)</div>
+<div class="detail-value" id="mSender"></div>
+</div>
+<div class="detail-item">
+<div class="detail-label">مرسل‌الیه (گیرنده)</div>
+<div class="detail-value" id="mRec"></div>
+</div>
+<div class="detail-item">
+<div class="detail-label">اقدام (مرجع اقدام)</div>
+<div class="detail-value" id="mAction"></div>
+</div>
+</div>
+</div>
+
+<div class="detail-card">
+<div class="detail-title">📄 موضوع و دوسیه</div>
+<div class="detail-row">
+<div class="detail-item" style="grid-column: span 2;">
+<div class="detail-label">موضوع</div>
+<div class="detail-value" id="mSubject"></div>
+</div>
+<div class="detail-item" style="grid-column: span 2;">
+<div class="detail-label">دوسیه/مرجع</div>
+<div class="detail-value" id="mDosya"></div>
+</div>
+</div>
+</div>
+
+<div class="detail-card">
+<div class="detail-title">📝 متن مکتوب</div>
+<div class="text-content" id="mBody"></div>
+</div>
+
+<div class="detail-card">
+<div class="detail-title">📎 پیوست‌ها</div>
+<div id="fileSection" class="d-none">
+<div class="d-flex align-items-center justify-content-between">
+<div>
+<span class="file-badge">
+<i class="fas fa-file-pdf"></i>
+<span id="fileName"></span>
+</span>
+</div>
+<div>
+<a id="mPdf" class="pdf-btn" target="_blank">
+<i class="fas fa-external-link-alt"></i> مشاهده PDF
 </a>
+</div>
+</div>
+</div>
+<div id="noFile" class="text-center py-3 text-muted">
+<i class="fas fa-paperclip" style="font-size:24px;opacity:0.5;"></i>
+<div class="mt-2">فایل پیوستی وجود ندارد</div>
+</div>
+</div>
+</div>
+
+<div class="modal-footer">
+<div class="d-flex justify-content-between w-100">
+<div class="text-muted small">
+شناسه: <span id="mId" class="fw-bold"></span>
+</div>
+<div>
+<button class="btn btn-sm btn-outline-secondary me-2" data-bs-dismiss="modal">
+<i class="fas fa-times"></i> بستن
+</button>
+<a id="editLink" class="btn btn-sm btn-primary">
+<i class="fas fa-edit"></i> ویرایش
+</a>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -256,16 +458,52 @@ function filter(){
 
 document.querySelectorAll('.openModal').forEach(el=>{
  el.onclick=()=>{
-  mTitle.innerText='مکتوب شماره: '+el.dataset.number;
-  mDate.innerText=el.dataset.date;
-  mSender.innerText=el.dataset.sender;
-  mRec.innerText=el.dataset.rec;
-  mAction.innerText=el.dataset.action;
-  mBody.innerText=el.dataset.body;
-  if(el.dataset.file){
-   mPdf.href='uploads/'+el.dataset.file;
-   mPdf.classList.remove('d-none');
-  }else mPdf.classList.add('d-none');
+  // Set all details
+  mId.innerText = el.dataset.id;
+  mNumber.innerText = el.dataset.number;
+  mDate.innerText = el.dataset.date;
+  mSubject.innerText = el.dataset.subject;
+  mSender.innerText = el.dataset.sender || '---';
+  mRec.innerText = el.dataset.rec || '---';
+  mAction.innerText = el.dataset.action || '---';
+  mDosya.innerText = el.dataset.dosya || '---';
+  mBody.innerText = el.dataset.body || 'متن مکتوب وارد نشده است.';
+  
+  // Set type badge
+  const typeBadge = document.getElementById('mTypeBadge');
+  if(el.dataset.type === 'صادره') {
+    typeBadge.className = 'badge badge-s';
+    typeBadge.innerText = 'صادره';
+  } else {
+    typeBadge.className = 'badge badge-v';
+    typeBadge.innerText = 'وارده';
+  }
+  
+  // Set status badge
+  const statusBadge = document.getElementById('mStatusBadge');
+  if(el.dataset.status === '1') {
+    statusBadge.className = 'badge badge-e';
+    statusBadge.innerText = 'ابلاغیه';
+  } else {
+    statusBadge.className = 'badge badge-j';
+    statusBadge.innerText = 'جوابیه';
+  }
+  
+  // Handle PDF file
+  if(el.dataset.file) {
+    document.getElementById('fileSection').classList.remove('d-none');
+    document.getElementById('noFile').classList.add('d-none');
+    fileName.innerText = el.dataset.file;
+    mPdf.href = 'uploads/' + el.dataset.file;
+  } else {
+    document.getElementById('fileSection').classList.add('d-none');
+    document.getElementById('noFile').classList.remove('d-none');
+  }
+  
+  // Set edit link
+  editLink.href = 'edit.php?id=' + el.dataset.id;
+  
+  // Show modal
   new bootstrap.Modal(detailModal).show();
  }
 })

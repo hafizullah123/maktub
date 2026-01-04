@@ -238,6 +238,7 @@ textarea {
     <div class="header">
         <h1>📄 ثبت مکتوب جدید</h1>
         <p>اطلاعات مکتوب جدید را در فرم زیر وارد نمایید</p>
+        <a href="index.php">مشاهده لیست مکاتب</a>
     </div>
 
     <div class="form-content">
@@ -253,6 +254,10 @@ textarea {
                             <option value="">انتخاب کنید</option>
                             <option value="صادره">صادره</option>
                             <option value="وارده">وارده</option>
+                            <option value="وارده">استعلام</option>
+                            <option value="وارده">پیشنهاد</option>
+                           
+
                         </select>
                     </div>
 
