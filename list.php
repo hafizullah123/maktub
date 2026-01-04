@@ -232,6 +232,8 @@ body{
    <option value="">نوع</option>
    <option>صادره</option>
    <option>وارده</option>
+    <option>استعلام</option>
+     <option>پیشنهاد</option>
   </select>
   <select id="sStatus">
    <option value="">وضعیت</option>
@@ -256,7 +258,9 @@ body{
 <tr>
 <td><?= $r['maktub_type']=='صادره'
 ?'<span class="badge badge-s">صادره</span>'
-:'<span class="badge badge-v">وارده</span>' ?></td>
+:'<span class="badge badge-v">وارده</span>' 
+
+?></td>
 
 <td>
 <span class="link-btn openModal"
