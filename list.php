@@ -104,6 +104,8 @@ body{
 .badge{font-size:11px;padding:3px 7px;border-radius:6px}
 .badge-s{background:#e0f2f1;color:#065f46}
 .badge-v{background:#e8f5e9;color:#1b5e20}
+.badge-i{background:#e3f2fd;color:#0d47a1} /* استعلام */
+.badge-p{background:#fff3e0;color:#e65100} /* پیشنهاد */
 .badge-e{background:#ede7f6;color:#4527a0}
 .badge-j{background:#fff7ed;color:#9a3412}
 
@@ -232,8 +234,8 @@ body{
    <option value="">نوع</option>
    <option>صادره</option>
    <option>وارده</option>
-    <option>استعلام</option>
-     <option>پیشنهاد</option>
+   <option>استعلام</option>
+   <option>پیشنهاد</option>
   </select>
   <select id="sStatus">
    <option value="">وضعیت</option>
@@ -256,11 +258,23 @@ body{
 <tbody>
 <?php while($r=$result->fetch_assoc()): ?>
 <tr>
-<td><?= $r['maktub_type']=='صادره'
-?'<span class="badge badge-s">صادره</span>'
-:'<span class="badge badge-v">وارده</span>' 
-
-?></td>
+<td>
+<?php 
+// نمایش نشان‌گر بر اساس نوع مکتوب
+$type = $r['maktub_type'];
+if($type == 'صادره') {
+    echo '<span class="badge badge-s">صادره</span>';
+} elseif($type == 'وارده') {
+    echo '<span class="badge badge-v">وارده</span>';
+} elseif($type == 'استعلام') {
+    echo '<span class="badge badge-i">استعلام</span>';
+} elseif($type == 'پیشنهاد') {
+    echo '<span class="badge badge-p">پیشنهاد</span>';
+} else {
+    echo '<span class="badge">' . $type . '</span>';
+}
+?>
+</td>
 
 <td>
 <span class="link-btn openModal"
@@ -451,7 +465,15 @@ function filter(){
   let ok=true;
   if(sNumber.value && !r.cells[1].innerText.includes(sNumber.value)) ok=false;
   if(sSubject.value && !r.cells[6].innerText.includes(sSubject.value)) ok=false;
-  if(sType.value && r.cells[0].innerText.trim()!=sType.value) ok=false;
+  
+  // فیلتر نوع مکتوب
+  if(sType.value){
+   const typeCell = r.cells[0];
+   const typeBadge = typeCell.querySelector('.badge');
+   const typeText = typeBadge ? typeBadge.innerText : typeCell.innerText;
+   if(typeText.trim() !== sType.value.trim()) ok=false;
+  }
+  
   if(sStatus.value){
    let h=r.cells[8].innerText.includes('ابلاغیه')?'1':'0';
    if(h!=sStatus.value) ok=false;
@@ -475,13 +497,21 @@ document.querySelectorAll('.openModal').forEach(el=>{
   
   // Set type badge
   const typeBadge = document.getElementById('mTypeBadge');
-  if(el.dataset.type === 'صادره') {
+  const type = el.dataset.type;
+  
+  // تنظیم کلاس badge بر اساس نوع
+  if(type === 'صادره') {
     typeBadge.className = 'badge badge-s';
-    typeBadge.innerText = 'صادره';
-  } else {
+  } else if(type === 'وارده') {
     typeBadge.className = 'badge badge-v';
-    typeBadge.innerText = 'وارده';
+  } else if(type === 'استعلام') {
+    typeBadge.className = 'badge badge-i';
+  } else if(type === 'پیشنهاد') {
+    typeBadge.className = 'badge badge-p';
+  } else {
+    typeBadge.className = 'badge';
   }
+  typeBadge.innerText = type;
   
   // Set status badge
   const statusBadge = document.getElementById('mStatusBadge');
