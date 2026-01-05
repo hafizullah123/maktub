@@ -29,7 +29,7 @@ body{
  font-size:13px;
  color:var(--text);
 }
-.container{max-width:1450px;margin:auto}
+.container{max-width:1550px;margin:auto}
 
 /* HEADER */
 .header{
@@ -82,21 +82,24 @@ body{
  padding:10px;
  border-radius:10px;
  box-shadow:0 2px 6px rgba(0,0,0,.05);
+ overflow-x:auto;
 }
 .data-table{
  width:100%;
  border-collapse:collapse;
- min-width:1150px;
+ min-width:1250px;
 }
 .data-table th{
  background:var(--soft);
  padding:8px;
  font-size:12px;
  border-bottom:1px solid #e5e7eb;
+ white-space:nowrap;
 }
 .data-table td{
  padding:7px;
  border-bottom:1px solid #edf1f4;
+ vertical-align:top;
 }
 .data-table tr:hover{background:#f8fafc}
 
@@ -104,8 +107,6 @@ body{
 .badge{font-size:11px;padding:3px 7px;border-radius:6px}
 .badge-s{background:#e0f2f1;color:#065f46}
 .badge-v{background:#e8f5e9;color:#1b5e20}
-.badge-i{background:#e3f2fd;color:#0d47a1} /* استعلام */
-.badge-p{background:#fff3e0;color:#e65100} /* پیشنهاد */
 .badge-e{background:#ede7f6;color:#4527a0}
 .badge-j{background:#fff7ed;color:#9a3412}
 
@@ -210,6 +211,22 @@ body{
  background:#f8fafc;
  border-top:1px solid #e5e7eb;
 }
+
+/* Zamaym badge style */
+.zamaym-badge{
+ background:#f3e8ff;
+ color:#7c3aed;
+ font-size:11px;
+ padding:3px 8px;
+ border-radius:4px;
+ display:inline-block;
+ margin:2px;
+}
+.zamaym-container{
+ max-width:200px;
+ max-height:60px;
+ overflow-y:auto;
+}
 </style>
 </head>
 
@@ -234,8 +251,8 @@ body{
    <option value="">نوع</option>
    <option>صادره</option>
    <option>وارده</option>
-   <option>استعلام</option>
-   <option>پیشنهاد</option>
+    <option>استعلام</option>
+     <option>پیشنهاد</option>
   </select>
   <select id="sStatus">
    <option value="">وضعیت</option>
@@ -250,31 +267,35 @@ body{
 <table class="data-table" id="dataTable">
 <thead>
 <tr>
-<th>نوع</th><th>نمبر</th><th>تاریخ</th><th>مرجع</th>
-<th>مرسل‌الیه</th><th>اقدام</th><th>موضوع</th>
-<th>دوسیه</th><th>وضعیت</th><th>ویرایش</th><th>PDF</th>
+<th>نوع</th>
+<th>نمبر</th>
+<th>تاریخ</th>
+<th>مرجع</th>
+<th>مرسل‌الیه</th>
+<th>اقدام</th>
+<th>موضوع</th>
+<th>دوسیه</th>
+<th>ضمیمه‌ها</th>
+<th>وضعیت</th>
+<th>ویرایش</th>
+<th>PDF</th>
 </tr>
 </thead>
 <tbody>
-<?php while($r=$result->fetch_assoc()): ?>
-<tr>
-<td>
-<?php 
-// نمایش نشان‌گر بر اساس نوع مکتوب
-$type = $r['maktub_type'];
-if($type == 'صادره') {
-    echo '<span class="badge badge-s">صادره</span>';
-} elseif($type == 'وارده') {
-    echo '<span class="badge badge-v">وارده</span>';
-} elseif($type == 'استعلام') {
-    echo '<span class="badge badge-i">استعلام</span>';
-} elseif($type == 'پیشنهاد') {
-    echo '<span class="badge badge-p">پیشنهاد</span>';
-} else {
-    echo '<span class="badge">' . $type . '</span>';
+<?php while($r=$result->fetch_assoc()): 
+// Process zamaym field
+$zamaym_items = [];
+if (!empty($r['zamaym'])) {
+    $zamaym_items = explode(',', $r['zamaym']);
+    $zamaym_items = array_map('trim', $zamaym_items);
 }
 ?>
-</td>
+<tr>
+<td><?= $r['maktub_type']=='صادره'
+?'<span class="badge badge-s">صادره</span>'
+:'<span class="badge badge-v">وارده</span>' 
+
+?></td>
 
 <td>
 <span class="link-btn openModal"
@@ -288,6 +309,7 @@ if($type == 'صادره') {
  data-rec="<?= htmlspecialchars($r['mur_sal_aly']) ?>"
  data-action="<?= htmlspecialchars($r['marja_eghdam']) ?>"
  data-dosya="<?= htmlspecialchars($r['dosya_morba'] ?? '') ?>"
+ data-zamaym="<?= htmlspecialchars($r['zamaym'] ?? '') ?>"
  data-status="<?= $r['hifz_shud'] ?>"
  data-status-text="<?= $r['hifz_shud'] ? 'ابلاغیه' : 'جوابیه' ?>"
  data-file="<?= $r['kpdfdesc'] ?>">
@@ -296,11 +318,22 @@ if($type == 'صادره') {
 </td>
 
 <td><?= $r['maktub_date'] ?></td>
-<td><?= $r['sender_source'] ?></td>
-<td><?= $r['mur_sal_aly'] ?></td>
-<td><?= $r['marja_eghdam'] ?></td>
+<td><?= mb_strimwidth($r['sender_source'],0,25,'...') ?></td>
+<td><?= mb_strimwidth($r['mur_sal_aly'] ?? '',0,25,'...') ?></td>
+<td><?= mb_strimwidth($r['marja_eghdam'] ?? '',0,25,'...') ?></td>
 <td><?= mb_strimwidth($r['subject'],0,40,'...') ?></td>
-<td><?= mb_strimwidth($r['dosya_morba'],0,30,'...') ?></td>
+<td><?= mb_strimwidth($r['dosya_morba'] ?? '',0,30,'...') ?></td>
+<td class="zamaym-container">
+<?php if (!empty($zamaym_items)): ?>
+    <?php foreach($zamaym_items as $item): ?>
+        <?php if (!empty($item)): ?>
+        <div class="zamaym-badge"><?= htmlspecialchars($item) ?></div>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php else: ?>
+    <span class="text-muted">--</span>
+<?php endif; ?>
+</td>
 <td><?= $r['hifz_shud']
 ?'<span class="badge badge-e">ابلاغیه</span>'
 :'<span class="badge badge-j">جوابیه</span>' ?></td>
@@ -324,6 +357,7 @@ if($type == 'صادره') {
  data-rec="<?= htmlspecialchars($r['mur_sal_aly']) ?>"
  data-action="<?= htmlspecialchars($r['marja_eghdam']) ?>"
  data-dosya="<?= htmlspecialchars($r['dosya_morba'] ?? '') ?>"
+ data-zamaym="<?= htmlspecialchars($r['zamaym'] ?? '') ?>"
  data-status="<?= $r['hifz_shud'] ?>"
  data-status-text="<?= $r['hifz_shud'] ? 'ابلاغیه' : 'جوابیه' ?>"
  data-file="<?= $r['kpdfdesc'] ?>"></i>
@@ -404,6 +438,13 @@ if($type == 'صادره') {
 </div>
 
 <div class="detail-card">
+<div class="detail-title">📎 ضمیمه‌ها (Zamaym)</div>
+<div id="zamaymSection">
+<div id="zamaymContent"></div>
+</div>
+</div>
+
+<div class="detail-card">
 <div class="detail-title">📝 متن مکتوب</div>
 <div class="text-content" id="mBody"></div>
 </div>
@@ -465,17 +506,9 @@ function filter(){
   let ok=true;
   if(sNumber.value && !r.cells[1].innerText.includes(sNumber.value)) ok=false;
   if(sSubject.value && !r.cells[6].innerText.includes(sSubject.value)) ok=false;
-  
-  // فیلتر نوع مکتوب
-  if(sType.value){
-   const typeCell = r.cells[0];
-   const typeBadge = typeCell.querySelector('.badge');
-   const typeText = typeBadge ? typeBadge.innerText : typeCell.innerText;
-   if(typeText.trim() !== sType.value.trim()) ok=false;
-  }
-  
+  if(sType.value && r.cells[0].innerText.trim()!=sType.value) ok=false;
   if(sStatus.value){
-   let h=r.cells[8].innerText.includes('ابلاغیه')?'1':'0';
+   let h=r.cells[9].innerText.includes('ابلاغیه')?'1':'0';
    if(h!=sStatus.value) ok=false;
   }
   r.style.display=ok?'':'none';
@@ -495,23 +528,33 @@ document.querySelectorAll('.openModal').forEach(el=>{
   mDosya.innerText = el.dataset.dosya || '---';
   mBody.innerText = el.dataset.body || 'متن مکتوب وارد نشده است.';
   
+  // Set zamaym content
+  const zamaymContent = document.getElementById('zamaymContent');
+  if(el.dataset.zamaym) {
+    const zamaymItems = el.dataset.zamaym.split(',').map(item => item.trim()).filter(item => item);
+    if(zamaymItems.length > 0) {
+      let zamaymHtml = '<div class="d-flex flex-wrap gap-2">';
+      zamaymItems.forEach(item => {
+        zamaymHtml += `<span class="zamaym-badge">${item}</span>`;
+      });
+      zamaymHtml += '</div>';
+      zamaymContent.innerHTML = zamaymHtml;
+    } else {
+      zamaymContent.innerHTML = '<div class="text-muted">ضمیمه‌ای وجود ندارد</div>';
+    }
+  } else {
+    zamaymContent.innerHTML = '<div class="text-muted">ضمیمه‌ای وجود ندارد</div>';
+  }
+  
   // Set type badge
   const typeBadge = document.getElementById('mTypeBadge');
-  const type = el.dataset.type;
-  
-  // تنظیم کلاس badge بر اساس نوع
-  if(type === 'صادره') {
+  if(el.dataset.type === 'صادره') {
     typeBadge.className = 'badge badge-s';
-  } else if(type === 'وارده') {
-    typeBadge.className = 'badge badge-v';
-  } else if(type === 'استعلام') {
-    typeBadge.className = 'badge badge-i';
-  } else if(type === 'پیشنهاد') {
-    typeBadge.className = 'badge badge-p';
+    typeBadge.innerText = 'صادره';
   } else {
-    typeBadge.className = 'badge';
+    typeBadge.className = 'badge badge-v';
+    typeBadge.innerText = 'وارده';
   }
-  typeBadge.innerText = type;
   
   // Set status badge
   const statusBadge = document.getElementById('mStatusBadge');
