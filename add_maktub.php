@@ -332,7 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- بخش چهارم: وضعیت و فایل -->
             <div class="form-section">
                 <div class="section-title">
-                    <i class="fas fa-cog"></i> وضعیت و پیوست
+                    <i class="fas fa-cog"></i> فایل PDF
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
