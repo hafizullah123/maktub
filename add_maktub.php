@@ -244,8 +244,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option value="">-- انتخاب کنید --</option>
                             <option value="صادره" <?php echo ($_POST['maktub_type'] ?? '') == 'صادره' ? 'selected' : ''; ?>>صادره</option>
                             <option value="وارده" <?php echo ($_POST['maktub_type'] ?? '') == 'وارده' ? 'selected' : ''; ?>>وارده</option>
-                             <option value="استعلام" <?php echo ($_POST['maktub_type'] ?? '') == 'استعلام' ? 'selected' : ''; ?>>استعلام</option>
-                              <option value="پیشنهاد" <?php echo ($_POST['maktub_type'] ?? '') == 'پیشنهاد' ? 'selected' : ''; ?>>پیشنهاد</option>
+                            <option value="استعلام" <?php echo ($_POST['maktub_type'] ?? '') == 'استعلام' ? 'selected' : ''; ?>>استعلام</option>
+                           <option value="پیشنهاد" <?php echo ($_POST['maktub_type'] ?? '') == 'پیشنهاد' ? 'selected' : ''; ?>>پیشنهاد</option>
                         </select>
                     </div>
                     <div class="col-md-4">

@@ -1,7 +1,7 @@
 <?php
 $conn = new mysqli("localhost","root","","maktub");
 if ($conn->connect_error) die("DB Error");
-$result = $conn->query("SELECT * FROM maktub_simple ORDER BY id DESC");
+$result = $conn->query("SELECT * FROM maktub_simple ORDER BY maktub_number DESC");
 $total = $result->num_rows;
 ?>
 <!DOCTYPE html>
@@ -251,8 +251,8 @@ body{
    <option value="">نوع</option>
    <option>صادره</option>
    <option>وارده</option>
-    <option>استعلام</option>
-     <option>پیشنهاد</option>
+   <option>استعلام</option>
+    <option>پیشنهاد</option>
   </select>
   <select id="sStatus">
    <option value="">وضعیت</option>
