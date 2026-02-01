@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="col-md-6">
                         <label class="form-label">فایل PDF مکتوب</label>
                         <input type="file" name="kpdfdesc" class="form-control" accept=".pdf">
-                        <div class="file-info">فرمت مجاز: PDF - حداکثر حجم: ۵ مگابایت</div>
+                        <div class="file-info">فرمت مجاز: PDF - حداکثر حجم: 20 مگابایت</div>
                     </div>
                 </div>
             </div>
@@ -453,9 +453,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             const fileInput = document.querySelector('input[name="kpdfdesc"]');
             if (fileInput) {
                 fileInput.addEventListener('change', function() {
-                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    const maxSize = 20 * 1024 * 1024; // 20MB
                     if (this.files[0] && this.files[0].size > maxSize) {
-                        alert('حجم فایل نباید بیشتر از ۵ مگابایت باشد.');
+                        alert('حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.');
                         this.value = '';
                     }
                 });

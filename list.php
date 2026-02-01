@@ -252,7 +252,7 @@ body{
    <option>صادره</option>
    <option>وارده</option>
    <option>استعلام</option>
-    <option>پیشنهاد</option>
+  <option>پیشنهاد</option>
   </select>
   <select id="sStatus">
    <option value="">وضعیت</option>
@@ -291,11 +291,22 @@ if (!empty($r['zamaym'])) {
 }
 ?>
 <tr>
-<td><?= $r['maktub_type']=='صادره'
-?'<span class="badge badge-s">صادره</span>'
-:'<span class="badge badge-v">وارده</span>' 
-
-?></td>
+<td>
+<?php 
+$type = $r['maktub_type'];
+if ($type == 'صادره') {
+    echo '<span class="badge badge-s">صادره</span>';
+} elseif ($type == 'وارده') {
+    echo '<span class="badge badge-v">وارده</span>';
+} elseif ($type == 'استعلام') {
+    echo '<span class="badge badge-e">استعلام</span>';
+} elseif ($type == 'پیشنهاد') {
+    echo '<span class="badge badge-j">پیشنهاد</span>';
+} else {
+    echo '<span class="badge">' . htmlspecialchars($type) . '</span>';
+}
+?>
+</td>
 
 <td>
 <span class="link-btn openModal"
@@ -548,12 +559,22 @@ document.querySelectorAll('.openModal').forEach(el=>{
   
   // Set type badge
   const typeBadge = document.getElementById('mTypeBadge');
-  if(el.dataset.type === 'صادره') {
+  const type = el.dataset.type;
+  if(type === 'صادره') {
     typeBadge.className = 'badge badge-s';
     typeBadge.innerText = 'صادره';
-  } else {
+  } else if(type === 'وارده') {
     typeBadge.className = 'badge badge-v';
     typeBadge.innerText = 'وارده';
+  } else if(type === 'استعلام') {
+    typeBadge.className = 'badge badge-e';
+    typeBadge.innerText = 'استعلام';
+  } else if(type === 'پیشنهاد') {
+    typeBadge.className = 'badge badge-j';
+    typeBadge.innerText = 'پیشنهاد';
+  } else {
+    typeBadge.className = 'badge';
+    typeBadge.innerText = type || '---';
   }
   
   // Set status badge
